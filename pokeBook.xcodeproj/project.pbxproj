@@ -72,16 +72,13 @@
 			children = (
 				56CBA8842C63807A0076E283 /* Common */,
 				56CBA8892C63833F0076E283 /* Model */,
+				56CBA8992C6501750076E283 /* View */,
 				56CBA88A2C6383470076E283 /* ViewModel */,
 				56CBA8442C6364390076E283 /* AppDelegate.swift */,
 				56CBA8462C6364390076E283 /* SceneDelegate.swift */,
-				56CBA8482C6364390076E283 /* MainViewController.swift */,
 				56CBA84A2C63643C0076E283 /* Assets.xcassets */,
 				56CBA84C2C63643C0076E283 /* LaunchScreen.storyboard */,
 				56CBA84F2C63643C0076E283 /* Info.plist */,
-				56CBA88D2C6384890076E283 /* PokemonCell.swift */,
-				56CBA88F2C6384BF0076E283 /* DetailViewModel.swift */,
-				56CBA8912C6384F10076E283 /* DetailViewController.swift */,
 				56CBA8972C648EF30076E283 /* Translations.swift */,
 			);
 			path = pokeBook;
@@ -107,8 +104,19 @@
 			isa = PBXGroup;
 			children = (
 				56CBA88B2C63836E0076E283 /* MainViewModel.swift */,
+				56CBA88F2C6384BF0076E283 /* DetailViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		56CBA8992C6501750076E283 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				56CBA8482C6364390076E283 /* MainViewController.swift */,
+				56CBA88D2C6384890076E283 /* PokemonCell.swift */,
+				56CBA8912C6384F10076E283 /* DetailViewController.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -110,4 +110,14 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         detailVC.viewModel = DetailViewModel(pokemonDetail: pokemons[indexPath.item])
         navigationController?.pushViewController(detailVC, animated: true)
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.height
+        
+        if offsetY > contentHeight - frameHeight * 2 {
+            viewModel.fetchPokemons()
+        }
+    }
 }

@@ -88,12 +88,15 @@ class DetailViewController: UIViewController {
         setupConstraints()
         
         viewModel.pokemonDetail.subscribe(onNext: { [weak self] detail in
-            self?.idLabel.text = "No. \(detail.id)"
+            self?.idLabel.text = "No.\(detail.id)"
             self?.nameLabel.text = detail.localizedName
             let types = detail.localizedTypes().first ?? "Unknown"
             self?.typeLabel.text = "타입: \(types)"
-            self?.heightLabel.text = "키: 0.\(detail.height) m"
-            self?.weightLabel.text = "몸무게: 0.\(detail.weight) kg"
+            // 키랑 몸무게 그냥 앞에 0.몇 으로 넣는게 아닌 소수점 위치 지정
+            let heightInMeters = Double(detail.height) / 10.0
+            let weightInKg = Double(detail.weight) / 10.0
+            self?.heightLabel.text = "키: \(heightInMeters) m"
+            self?.weightLabel.text = "몸무게: \(weightInKg) kg"
             
             self?.loadImage(for: detail.id)
         }).disposed(by: disposeBag)
@@ -116,7 +119,7 @@ class DetailViewController: UIViewController {
             idLabel.centerXAnchor.constraint(equalTo: infoContainerView.centerXAnchor, constant: -40),
             
             nameLabel.topAnchor.constraint(equalTo: pokemonImageView.bottomAnchor, constant: 10),
-            nameLabel.centerXAnchor.constraint(equalTo: infoContainerView.centerXAnchor, constant: 40),
+            nameLabel.leadingAnchor.constraint(equalTo: idLabel.trailingAnchor, constant: 10),
             
             typeLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
             typeLabel.centerXAnchor.constraint(equalTo: infoContainerView.centerXAnchor),

@@ -10,13 +10,14 @@ import UIKit
 class PokemonCell: UICollectionViewCell {
     static let identifier = "PokemonCell"
     
-    let imageView: UIImageView = {
+    private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
+    private var imageUrl: String?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,15 +40,29 @@ class PokemonCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+        imageUrl = nil
+    }
+    
     func configure(with pokemon: PokemonDetail) {
+        // 셀에 맞는 이미지 URL 설정
+        let urlString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemon.id).png"
+        imageUrl = urlString
         
         // 비동기 이미지 로딩
-        DispatchQueue.global().async {
-            if let url = URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(pokemon.id).png"),
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else { return }
+            if let url = URL(string: urlString),
                let data = try? Data(contentsOf: url),
                let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.imageView.image = image
+                
+                // URL이 동일한지 확인하여 이미지 설정
+                if self.imageUrl == urlString {
+                    DispatchQueue.main.async {
+                        self.imageView.image = image
+                    }
                 }
             }
         }
