@@ -27,14 +27,6 @@ class DetailViewController: UIViewController {
         return view
     }()
     
-    let idLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont.boldSystemFont(ofSize: 24)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
     
     let nameLabel: UILabel = {
         let label = UILabel()
@@ -79,7 +71,6 @@ class DetailViewController: UIViewController {
         
         view.addSubview(infoContainerView)
         infoContainerView.addSubview(pokemonImageView)
-        infoContainerView.addSubview(idLabel)
         infoContainerView.addSubview(nameLabel)
         infoContainerView.addSubview(typeLabel)
         infoContainerView.addSubview(heightLabel)
@@ -88,8 +79,7 @@ class DetailViewController: UIViewController {
         setupConstraints()
         
         viewModel.pokemonDetail.subscribe(onNext: { [weak self] detail in
-            self?.idLabel.text = "No.\(detail.id)"
-            self?.nameLabel.text = detail.localizedName
+            self?.nameLabel.text = "No.\(detail.id)  " + detail.localizedName
             let types = detail.localizedTypes().first ?? "Unknown"
             self?.typeLabel.text = "타입: \(types)"
             // 키랑 몸무게 그냥 앞에 0.몇 으로 넣는게 아닌 소수점 위치 지정
@@ -98,7 +88,10 @@ class DetailViewController: UIViewController {
             self?.heightLabel.text = "키: \(heightInMeters) m"
             self?.weightLabel.text = "몸무게: \(weightInKg) kg"
             
-            self?.loadImage(for: detail.id)
+            Task {
+                let image = await self?.viewModel.loadImage(for: detail.id)
+                self?.pokemonImageView.image = image
+            }
         }).disposed(by: disposeBag)
     }
     
@@ -115,11 +108,9 @@ class DetailViewController: UIViewController {
             pokemonImageView.widthAnchor.constraint(equalToConstant: 150),
             pokemonImageView.heightAnchor.constraint(equalToConstant: 150),
             
-            idLabel.topAnchor.constraint(equalTo: pokemonImageView.bottomAnchor, constant: 10),
-            idLabel.centerXAnchor.constraint(equalTo: infoContainerView.centerXAnchor, constant: -40),
             
             nameLabel.topAnchor.constraint(equalTo: pokemonImageView.bottomAnchor, constant: 10),
-            nameLabel.leadingAnchor.constraint(equalTo: idLabel.trailingAnchor, constant: 10),
+            nameLabel.centerXAnchor.constraint(equalTo: infoContainerView.centerXAnchor),
             
             typeLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
             typeLabel.centerXAnchor.constraint(equalTo: infoContainerView.centerXAnchor),
@@ -130,26 +121,5 @@ class DetailViewController: UIViewController {
             weightLabel.topAnchor.constraint(equalTo: heightLabel.bottomAnchor, constant: 10),
             weightLabel.centerXAnchor.constraint(equalTo: infoContainerView.centerXAnchor),
         ])
-    }
-    
-    private func loadImage(for id: Int) {
-        let urlString = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png"
-        guard let url = URL(string: urlString) else { return }
-        
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-            if let error = error {
-                print("Failed to load image: \(error)")
-                return
-            }
-            
-            guard let data = data, let image = UIImage(data: data) else {
-                print("Failed to convert data to image")
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self?.pokemonImageView.image = image
-            }
-        }.resume()
     }
 }
